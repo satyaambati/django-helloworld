@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - pip install awscli
+  pre_build:
+    commands:
+      - echo "Starting pre-build phase"
+  build:
+    commands:
+      - echo "Starting build phase"
+      - python -m venv env
+      - source env/bin/activate
+      - pip install -r requirements.txt
+      - python manage.py collectstatic --noinput
+      - python manage.py migrate --noinput
+  post_build:
+    commands:
+      - echo "Starting post-build phase"
+      - aws s3 sync . s3://python-django-deployment	
